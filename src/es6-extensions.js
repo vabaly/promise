@@ -121,9 +121,15 @@ Promise.reject = function (value) {
   });
 };
 
+/**
+ * Promise.race 的实现
+ */
 Promise.race = function (values) {
   return new Promise(function (resolve, reject) {
+    // 遍历 promises，按顺序排到下一个事件循环微任务队列中去
+    // 所以即便是同时完成，或者后面的比前面的先完成一点点时间，到事件循环时都完成了，还是前面的优先决议
     values.forEach(function(value){
+      // 使用 Promise.resolve 是为了保证即便 value 是非 Promise 值也能兼容
       Promise.resolve(value).then(resolve, reject);
     });
   });
